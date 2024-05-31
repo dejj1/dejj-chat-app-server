@@ -44,7 +44,7 @@ const conversationSchema = new mongoose.Schema(
     ],
   },
   {
-    timestampstrue,
+    timestamps: true,
   }
 );
 

@@ -3,7 +3,8 @@ const app = express()
 const {Server} = require('socket.io')
 const http = require('http')
 const getUserDetailsFromToken = require("../helpers/getUserDetailsFromToken");
-const UserModel = require('../models/userModel')
+const UserModel = require('../models/userModel');
+const { ConversationModel, MessageModel } = require('../models/conversationModel');
 // socket connection
 const server = http.createServer(app)
 const io = new Server(server, {
@@ -42,6 +43,36 @@ io.on('connection', async(socket)=>{
         }
 
         socket.emit('message-user', payload)
+    })
+
+    // new message
+    socket.on('new message', async (data)=>{
+        // check if conversation btw both users is available
+        let conversation = await ConversationModel.findOne({
+            "$or": [
+                {sender: data?.sender, receiver: data?.receiver},
+                {sender: data?.receiver, receiver: data?.sender}
+            ]
+        })
+
+        if(!conversation){
+            const createConversation = await ConversationModel({
+                sender: data?.sender,
+                receiver: data?.receiver
+            })
+            conversation = await createConversation.save()
+        }
+        const message = new MessageModel({
+            text: data.text,
+            imageUrl: data.imageUrl,
+            videoUrl: data.videoUrl,
+            
+        })
+        const saveMessage = await message.save()
+        const updateConversation = await ConversationModel.updateOne({_id: conversation?._id},{
+            "$push": {messages: saveMessage?._id}
+        })
+        console.log('new message', data)
     })
     // disconnect
     socket.on('disconnect',()=>{

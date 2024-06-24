@@ -1,22 +1,21 @@
 const getUserDetailsFromToken = require("../helpers/getUserDetailsFromToken");
 const UserModel = require("../models/userModel");
 
-async function updateUserDetails(req, res) {
+async function deletePicture(req, res) {
   try {
     const token = req.cookies.token || "";
     const user = await getUserDetailsFromToken(token);
 
-    const { name, profile_pic } = req.body;
-    await UserModel.updateOne(
-      { _id: user._id },
+    const { profile_pic } = req.body;
+    await UserModel.findByIdAndDelete(
+     
       {
-        name,
         profile_pic,
       }
     );
     const userInformation = await UserModel.findById(user._id);
     return res.json({
-      message: "User updated successfully",
+      message: "User profile picture deleted successfully",
       data: userInformation,
       success: true,
     });
@@ -27,4 +26,4 @@ async function updateUserDetails(req, res) {
     });
   }
 }
-module.exports = updateUserDetails;
+module.exports = deletePicture;

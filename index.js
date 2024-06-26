@@ -4,11 +4,11 @@ require("dotenv").config();
 const connectDB = require("./config/connectDB");
 const router = require("./routes/routes");
 const cookiesParser = require("cookie-parser");
-const {app, server} = require('./socket/index')
+const { app, server } = require("./socket/index");
 // const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: 'https://dejj-chat-app.vercel.app',
     credentials: true,
   })
 );

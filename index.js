@@ -6,9 +6,10 @@ const router = require("./routes/routes");
 const cookiesParser = require("cookie-parser");
 const { app, server } = require("./socket/index");
 // const app = express();
+const allowedOrigins = ['https://dejj-chat-app.vercel.app', 'http://localhost:3000'];
 app.use(
   cors({
-    origin: 'https://dejj-chat-app.vercel.app',
+    origin: allowedOrigins,
     credentials: true,
   })
 );
